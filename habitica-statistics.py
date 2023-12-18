@@ -30,10 +30,13 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as file:
             table_row_date = datetime.strptime(
                 table_row['Date'], '%Y-%m-%d %H:%M:%S')
 
+            table_row_date_formatted = table_row_date.strftime('%d.%m.%Y')
+
             if (start_date <= table_row_date <= end_date + timedelta(days=1) and
                 table_task_id == task_id and
-                table_row_date not in task_days):
-                task_days.append(table_row_date)
+                table_row_date_formatted not in task_days):
+
+                task_days.append(table_row_date_formatted)
 
                 if task_name is None:
                     task_name = table_task_name
