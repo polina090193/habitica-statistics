@@ -7,10 +7,11 @@ Python app for calculating your habits statistics based on data from [Habitica a
 3. Go to [https://habitica.com/export/history.csv](https://habitica.com/export/history.csv) to get your data about habits and dailies in CSV.
 4. Put the file in the same folder as app.py.
 5. Open the app.py in your code editor.
-6. Add date range you want to examine to variables start_date and end_date.
-7. Add task IDs you want to examine (you can peek it in your .csv file).
-8. Run the file.
-9. Example output:
+6. You can add task IDs directly in the code in the array task_ids, or you will have this opportunity later after running the app.
+7. Run the file.
+8. Enter start and end dates.
+9. Enter task IDs if you want. If no task IDs are entered in the code or in this input, all tasks from the data will be shown.
+10. Example output:
 ```
 Eat a fruit 🍎:
              35 times
