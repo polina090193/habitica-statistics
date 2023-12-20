@@ -12,11 +12,14 @@ def calculate_percentage(part, whole):
     return (part / whole) * 100
 
 task_ids = [
-    'exampled-test-test-test-yourtaskidaa',
+    # 'exampled-test-test-test-yourtaskidaa',
 ]
 
 with open(csv_file_path, 'r', newline='', encoding='utf-8') as file:
     reader = list(csv.DictReader(file))
+
+    if (not task_ids or len(task_ids) == 0):
+        task_ids = list(set(map(lambda row: row['Task ID'], reader)))
 
     streaks = {task_id: [[]] for task_id in task_ids}
 
