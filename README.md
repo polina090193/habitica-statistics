@@ -1,5 +1,6 @@
 # Habitica Statistics
 Python app for calculating your habits statistics based on data from [Habitica app](https://habitica.com/).
+
 Work in progress, stay tuned.
 
 ## Getting the file
