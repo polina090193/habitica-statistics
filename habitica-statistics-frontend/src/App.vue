@@ -6,6 +6,15 @@
     </form>
     <div style="color: red" v-for="error in errors" :key="error">{{ error }}</div>
     <form v-if="tasks.length" @submit.prevent="submitTasksForm">
+      <label for="select-all-tasks">
+        <input
+          type="checkbox"
+          id="select-all-tasks"
+          v-model="allTasksSelected"
+          @change="selectAlltasks"
+        />
+        Select all
+      </label>
       <p v-for="task in tasks" :key="task.id">
         <label :for="task.id">
           <input
@@ -40,6 +49,7 @@ export default {
       statisticsList: [],
       chosenStatisticsList: [],
       errors: [],
+      allTasksSelected: false,
     };
   },
   methods: {
@@ -76,6 +86,13 @@ export default {
         this.errors.push('Network error occurred');
       }
     },
+    selectAlltasks() {
+      if (this.selectedTasksIDs.length === this.tasks.length) {
+        this.selectedTasksIDs = [];
+      } else {
+        this.selectedTasksIDs = this.tasks.map(task => task.id);
+      }
+    },
     submitTasksForm() {
       this.chosenStatisticsList = this.statisticsList.filter(
         task => this.selectedTasksIDs.includes(task.id),
@@ -84,6 +101,7 @@ export default {
     resetChosenStatistics() {
       this.selectedTasksIDs = [];
       this.chosenStatisticsList = [];
+      this.allTasksSelected = false;
     },
   },
 };
