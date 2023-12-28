@@ -3,11 +3,7 @@ from datetime import datetime, timedelta
 def calculate_percentage(part, whole):
     return (part / whole) * 100
 
-def calculate_statistics(reader): #, start_date, end_date, task_ids
-    task_ids = []
-    start_date = datetime.strptime('01.12.2023', '%d.%m.%Y')
-    end_date = datetime.strptime('31.12.2023', '%d.%m.%Y')
-
+def calculate_statistics(reader, start_date, end_date, task_ids):
     habits_statistics = []
     number_of_days = (end_date - start_date).days
 

@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import csv
 import habitica_statistics
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
@@ -36,7 +37,7 @@ def get_statistics():
 
   response = {
     'tasks_list': tasks_list,
-    'statistics': habitica_statistics.calculate_statistics(reader)
+    'statistics': habitica_statistics.calculate_statistics(reader, datetime.strptime('01.12.2023', '%d.%m.%Y'), datetime.strptime('31.12.2023', '%d.%m.%Y'), ids_seen)
   }
 
   return response, 200, {'Access-Control-Allow-Origin': 'http://localhost:8080'}
