@@ -2,7 +2,6 @@ import csv, click
 from datetime import datetime, timedelta
 
 csv_file_path = 'habitica-tasks-history.csv'
-filtered_rows = []
 
 while True:
     start_date_inp = input('Start date\n(Enter date as dd.mm.yyyy): ')
@@ -71,7 +70,6 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as file:
         for table_row in sorted_rows:
             table_task_name = table_row['Task Name']
             table_task_id = table_row['Task ID']
-            date_time_str = table_row['Date']
 
             table_row_date = datetime.strptime(
                 table_row['Date'], '%Y-%m-%d %H:%M:%S')

@@ -1,16 +1,30 @@
 # Habitica Statistics
 Python app for calculating your habits statistics based on data from [Habitica app](https://habitica.com/).
 
-# Usage:
-1. Download the habitica-statistics/app.py file.
-2. Login to your Habitica account.
-3. Go to [https://habitica.com/export/history.csv](https://habitica.com/export/history.csv) to get your data about habits and dailies in CSV.
-4. Put the file in the same folder as app.py.
-5. Open the app.py in your code editor.
-6. Add date range you want to examine to variables start_date and end_date.
-7. Add task IDs you want to examine (you can peek it in your .csv file).
-8. Run the file.
-9. Example output:
+## Getting the file
+1. Login to your Habitica account.
+2. Go to [https://habitica.com/export/history.csv](https://habitica.com/export/history.csv) to get your data about habits and dailies in CSV.
+
+# 1. Web app
+
+## Start:
+1. In the root directory run `flask run --debug`
+2. In the habitica-statistics-frontend directory run `npm run serve`
+3. Open http://localhost:8080/
+
+## Usage:
+4. Upload your downloaded habitica-tasks-history.csv
+5. Choose tasks.
+6. Push "Give me my statistics".
+
+# 2. Console app
+
+## Usage:
+1. Put your downloaded habitica-tasks-history.csv in the root folder.
+2. You can add task IDs you want to examine (you can peek it in your .csv file): to the task_ids variable or during running the app.
+3. Run the habitica-statistics-console-app.py.
+4. Enter start date and end date.
+5. Example output:
 ```
 Eat a fruit 🍎:
              35 times
