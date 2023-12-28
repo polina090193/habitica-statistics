@@ -1,6 +1,8 @@
 # Habitica Statistics
 Python app for calculating your habits statistics based on data from [Habitica app](https://habitica.com/).
 
+Work in progress, stay tuned.
+
 ## Getting the file
 1. Login to your Habitica account.
 2. Go to [https://habitica.com/export/history.csv](https://habitica.com/export/history.csv) to get your data about habits and dailies in CSV.
@@ -43,5 +45,3 @@ Reading:
              74%
              Longest streak: 8 days, 08.12.2023 - 15.12.2023
 ```
-
-Work in progress, stay tuned.
