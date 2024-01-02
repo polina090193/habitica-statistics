@@ -1,10 +1,11 @@
 <template>
   <div id="app">
     <form @submit.prevent="submitFileForm">
-      <input type="file" name="habitica-tasks-history" @change="onFileChange" />
+      <input type="file" name="habitica-tasks-history" ref="fileInput" @change="onFileChange" />
       <input type="date" name="start-date" v-model="startDate" />
       <input type="date" name="end-date" v-model="endDate" />
       <button :disabled="!selectedFile">Examine the file</button>
+      <button :disabled="!selectedFile" @click="resetAll">Reset all</button>
     </form>
     <div style="color: red" v-for="error in errors" :key="error">{{ error }}</div>
     <form v-if="tasks.length" @submit.prevent="submitTasksForm">
@@ -111,6 +112,18 @@ export default {
       this.chosenStatisticsList = [];
       this.allTasksSelected = false;
     },
+    resetAll() {
+      this.selectedFile = null;
+      this.$refs.fileInput.value = '';
+      this.startDate = '';
+      this.endDate = '';
+      this.tasks = [];
+      this.selectedTasksIDs = [];
+      this.statisticsList = [];
+      this.chosenStatisticsList = [];
+      this.errors = [];
+      this.allTasksSelected = false;
+    }
   },
 };
 </script>
