@@ -2,7 +2,9 @@
   <div id="app">
     <form @submit.prevent="submitFileForm">
       <input type="file" name="habitica-tasks-history" @change="onFileChange" />
-      <button :disabled="!selectedFile">Upload the file</button>
+      <input type="date" name="start-date" v-model="startDate" />
+      <input type="date" name="end-date" v-model="endDate" />
+      <button :disabled="!selectedFile">Examine the file</button>
     </form>
     <div style="color: red" v-for="error in errors" :key="error">{{ error }}</div>
     <form v-if="tasks.length" @submit.prevent="submitTasksForm">
@@ -39,12 +41,16 @@
 </template>
 
 <script>
+import dateAdapter from './utils/date-adapter';
+
 export default {
   name: 'App',
   data() {
     return {
       tasks: [],
       selectedFile: null,
+      startDate: '',
+      endDate: '',
       selectedTasksIDs: [],
       statisticsList: [],
       chosenStatisticsList: [],
@@ -63,6 +69,8 @@ export default {
 
       const formData = new FormData();
       formData.append('habitica-tasks-history', this.selectedFile);
+      formData.append('start-date', this.startDate === '' ? '' : dateAdapter(this.startDate));
+      formData.append('end-date', this.endDate === '' ? '' : dateAdapter(this.endDate));
 
       try {
         const fetchedTasksList = await fetch('http://127.0.0.1:5000/get-statistics', {

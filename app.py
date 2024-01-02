@@ -13,7 +13,16 @@ app.secret_key = file.read()
 def get_statistics():
   if 'habitica-tasks-history' not in request.files:
     return jsonify({'error': 'File not found'}), 400
-  
+
+  start_date = request.form.get('start-date')
+  end_date = request.form.get('end-date')
+
+  if (not start_date or start_date == ''):
+    start_date = datetime(1, 1, 1).strftime('%d.%m.%Y')
+
+  if (not end_date or end_date == ''):
+    end_date = datetime.now().strftime('%d.%m.%Y')
+
   uploaded_file = request.files['habitica-tasks-history']
 
   # Check if uploaded file exists and is CSV
@@ -37,7 +46,12 @@ def get_statistics():
 
   response = {
     'tasks_list': tasks_list,
-    'statistics': habitica_statistics.calculate_statistics(reader, datetime.strptime('01.12.2023', '%d.%m.%Y'), datetime.strptime('31.12.2023', '%d.%m.%Y'), ids_seen)
+    'statistics': habitica_statistics.calculate_statistics(
+      reader,
+      datetime.strptime(start_date, '%d.%m.%Y'),
+      datetime.strptime(end_date, '%d.%m.%Y'),
+      ids_seen
+    )
   }
 
   return response, 200, {'Access-Control-Allow-Origin': 'http://localhost:8080'}
