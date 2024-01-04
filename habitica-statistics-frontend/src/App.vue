@@ -37,25 +37,18 @@
       <button>Give me my statistics</button>
       <button @click="resetChosenStatistics">Reset statistics</button>
     </form>
-    <!-- <div v-for="(yearData, year) in calendar" :key="year">
-      <h2>{{ year }}</h2>
-      <div v-for="(monthData, month) in yearData" :key="month">
-        <h3>{{ months[month] }}</h3>
-        <div v-for="day in monthData" :key="day">{{ day }}</div>
-      </div>
-    </div> -->
     <div style="max-width: 80vw" v-if="chosenStatisticsList.length">
       <table class="calendar-table">
         <thead>
           <tr class="calendar-tr">
             <th class="calendar-table-name">Name</th>
-            <th v-for="(yearData, year) in calendar" :key="year">
-              {{ year }}
+            <th class="calendar-table-head" v-for="(yearData, year) in calendar" :key="year">
+              <div class="calendar-table-year">{{ year }}</div>
               <tr>
-                <th v-for="(monthData, month) in yearData" :key="month">
-                  {{ months[month] }}
+                <th class="calendar-table-head" v-for="(monthData, month) in yearData" :key="month">
+                  <div class="calendar-table-month">{{ months[month] }}</div>
                   <tr>
-                    <th class="border" v-for="day in monthData" :key="day">
+                    <th class="calendar-table-head border" v-for="day in monthData" :key="day">
                       {{ day }}
                     </th>
                   </tr>
@@ -68,7 +61,7 @@
           <tr class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
             <td class="calendar-table-name">{{ task.name }}</td>
             <td class="border" v-for="day in daysBetweenStartAndEnd" :key="day">
-              <span>{{ task.days.includes(day) ? '✔' : '' }}</span>
+              {{ task.days.includes(day) ? '✔' : '' }}
             </td>
           </tr>
         </tbody>
@@ -101,8 +94,8 @@ export default {
     return {
       tasks: [],
       selectedFile: null,
-      startDate: '',
-      endDate: '',
+      startDate: '2023-11-01',
+      endDate: '2023-12-31',
       calendar: {},
       selectedTasksIDs: [],
       statisticsList: [],
@@ -251,26 +244,38 @@ export default {
   margin-top: 60px;
   box-sizing: border-box;
 }
+* {
+  box-sizing: border-box;
+}
 .calendar-table {
   overflow: auto;
-  table-layout: fixed;
   border-collapse: collapse;
+  border: 1px solid black;
 }
 .border {
   border: 1px solid black;
-  width: 30px;
-  max-width: 30px;
-  min-height: 20px;
-  min-width: 30px;
   max-width: 30px;
   width: 30px;
+  padding: 0;
+  margin: 0;
 }
 .calendar-tr {
   display: flex;
+  margin: 0;
+  padding: 0;
+  border: 1px solid black;
 }
 .calendar-table-name {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
+  border: 1px solid black;
+}
+.calendar-table-head {
+  text-align: start;
+  padding: 0;
+}
+.calendar-table-year, .calendar-table-month {
+  padding-left: 5px;
 }
 </style>
