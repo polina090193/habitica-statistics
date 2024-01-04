@@ -78,7 +78,7 @@ def calculate_statistics(reader, start_date, end_date, task_ids):
         habits_statistics.append({
             'id': task_id,
             'name': task_name,
-            'days': len(task_days),
+            'days': task_days,
             'percentage': percentage,
             'longest_streak': longest_streak_result
         })

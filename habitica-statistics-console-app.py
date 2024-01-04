@@ -59,7 +59,7 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as file:
 
     for task_result in statistics_result:
         print(f"{task_result['name']}:\n \
-            {task_result['days']} times \n \
+            {len(task_result['days'])} times \n \
             {task_result['percentage']}% \n \
             Longest streak: {task_result['longest_streak']} \n\n \
         ")

@@ -1,4 +1,4 @@
-export default function dateAdapter(date) {
+export const convertToBEFormat = (date) => {
   const parts = date.split('-');
   if (parts.length === 3) {
     const [year, month, day] = parts;
@@ -6,4 +6,14 @@ export default function dateAdapter(date) {
   } else {
     return 'Invalid date format';
   }
+}
+
+export const parseDateStringToDate = (dateStr) => {
+  const [day, month, year] = dateStr.split('.').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+export const dateAdapter = {
+  convertToBEFormat,
+  parseDateStringToDate
 }

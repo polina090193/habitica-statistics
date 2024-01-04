@@ -1,9 +1,14 @@
 <template>
   <div id="app">
     <form @submit.prevent="submitFileForm">
-      <input type="file" name="habitica-tasks-history" ref="fileInput" @change="onFileChange" />
-      <input type="date" name="start-date" v-model="startDate" />
-      <input type="date" name="end-date" v-model="endDate" />
+      <input
+        type="file"
+        name="habitica-tasks-history"
+        ref="fileInput"
+        @change="onFileChange"
+      />
+      <input type="date" name="start-date" v-model="startDate" required />
+      <input type="date" name="end-date" v-model="endDate" required />
       <button :disabled="!selectedFile">Examine the file</button>
       <button :disabled="!selectedFile" @click="resetAll">Reset all</button>
     </form>
@@ -32,17 +37,63 @@
       <button>Give me my statistics</button>
       <button @click="resetChosenStatistics">Reset statistics</button>
     </form>
-    <div v-for="task in chosenStatisticsList" :key="task.id">
-      <p>{{ task.name }}</p>
-      <p>Days: {{ task.days }}</p>
-      <p>{{ task.percentage }}%</p>
-      <p>Longest streak: {{ task.longest_streak }}</p>
+    <!-- <div v-for="(yearData, year) in calendar" :key="year">
+      <h2>{{ year }}</h2>
+      <div v-for="(monthData, month) in yearData" :key="month">
+        <h3>{{ months[month] }}</h3>
+        <div v-for="day in monthData" :key="day">{{ day }}</div>
+      </div>
+    </div> -->
+    <div style="max-width: 80vw" v-if="chosenStatisticsList.length">
+      <table class="calendar-table">
+        <thead>
+          <tr class="calendar-tr">
+            <th class="calendar-table-name">Name</th>
+            <th v-for="(yearData, year) in calendar" :key="year">
+              {{ year }}
+              <tr>
+                <th v-for="(monthData, month) in yearData" :key="month">
+                  {{ months[month] }}
+                  <tr>
+                    <th class="border" v-for="day in monthData" :key="day">
+                      {{ day }}
+                    </th>
+                  </tr>
+                </th>
+              </tr>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
+            <td class="calendar-table-name">{{ task.name }}</td>
+            <td class="border" v-for="day in daysBetweenStartAndEnd" :key="day">
+              <span>{{ task.days.includes(day) ? '✔' : '' }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <table v-if="chosenStatisticsList.length">
+      <tr>
+        <th>Name</th>
+        <th>Days done</th>
+        <th>Percentage</th>
+        <th>Longest streak</th>
+      </tr>
+      <tr v-for="task in chosenStatisticsList" :key="task.id">
+        <td>{{ task.name }}</td>
+        <td>{{ task.days.length }}</td>
+        <td>{{ task.percentage }}%</td>
+        <td>{{ task.longest_streak }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script>
-import dateAdapter from './utils/date-adapter';
+import { dateAdapter } from './utils/date-adapter';
+import { getMonthsList } from './utils/get-months-list';
 
 export default {
   name: 'App',
@@ -52,12 +103,36 @@ export default {
       selectedFile: null,
       startDate: '',
       endDate: '',
+      calendar: {},
       selectedTasksIDs: [],
       statisticsList: [],
       chosenStatisticsList: [],
       errors: [],
       allTasksSelected: false,
     };
+  },
+  computed: {
+    months() {
+      return getMonthsList();
+    },
+    daysBetweenStartAndEnd() {
+      const firstDate = new Date(this.startDate);
+      const lastDate = new Date(this.endDate);
+      const dateArray = [];
+
+      for (
+        let currentDate = firstDate;
+        currentDate <= lastDate;
+        currentDate.setDate(currentDate.getDate() + 1)
+      ) {
+        dateArray.push(new Date(currentDate).toLocaleString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }));
+      }
+
+      return dateArray;
+    },
+  },
+  mounted() {
+    this.generateCalendar();
   },
   methods: {
     onFileChange(event) {
@@ -70,8 +145,14 @@ export default {
 
       const formData = new FormData();
       formData.append('habitica-tasks-history', this.selectedFile);
-      formData.append('start-date', this.startDate === '' ? '' : dateAdapter(this.startDate));
-      formData.append('end-date', this.endDate === '' ? '' : dateAdapter(this.endDate));
+      formData.append(
+        'start-date',
+        this.startDate === '' ? '' : dateAdapter.convertToBEFormat(this.startDate)
+      );
+      formData.append(
+        'end-date',
+        this.endDate === '' ? '' : dateAdapter.convertToBEFormat(this.endDate)
+      );
 
       try {
         const fetchedTasksList = await fetch('http://127.0.0.1:5000/get-statistics', {
@@ -103,9 +184,37 @@ export default {
       }
     },
     submitTasksForm() {
-      this.chosenStatisticsList = this.statisticsList.filter(
-        task => this.selectedTasksIDs.includes(task.id),
-      )
+      console.log('this.statisticsList', this.statisticsList);
+      this.chosenStatisticsList = this.statisticsList.filter(task =>
+        this.selectedTasksIDs.includes(task.id)
+      );
+      this.generateCalendar();
+    },
+    generateCalendar() {
+      const calendar = {};
+      let currentDate = new Date(this.startDate);
+      const lastDate = new Date(this.endDate);
+
+      while (currentDate <= lastDate) {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        if (!calendar[year]) {
+          calendar[year] = {};
+        }
+
+        calendar[year][month] = {};
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          calendar[year][month] = day;
+        }
+
+        currentDate.setMonth(month + 1);
+      }
+
+      this.calendar = calendar;
     },
     resetChosenStatistics() {
       this.selectedTasksIDs = [];
@@ -117,13 +226,14 @@ export default {
       this.$refs.fileInput.value = '';
       this.startDate = '';
       this.endDate = '';
+      this.calendar = [];
       this.tasks = [];
       this.selectedTasksIDs = [];
       this.statisticsList = [];
       this.chosenStatisticsList = [];
       this.errors = [];
       this.allTasksSelected = false;
-    }
+    },
   },
 };
 </script>
@@ -139,5 +249,28 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin-top: 60px;
+  box-sizing: border-box;
+}
+.calendar-table {
+  overflow: auto;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.border {
+  border: 1px solid black;
+  width: 30px;
+  max-width: 30px;
+  min-height: 20px;
+  min-width: 30px;
+  max-width: 30px;
+  width: 30px;
+}
+.calendar-tr {
+  display: flex;
+}
+.calendar-table-name {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
 }
 </style>
