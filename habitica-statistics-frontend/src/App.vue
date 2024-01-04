@@ -94,8 +94,8 @@ export default {
     return {
       tasks: [],
       selectedFile: null,
-      startDate: '2023-11-01',
-      endDate: '2023-12-31',
+      startDate: '',
+      endDate: '',
       calendar: {},
       selectedTasksIDs: [],
       statisticsList: [],
