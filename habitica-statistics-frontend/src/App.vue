@@ -7,8 +7,20 @@
         ref="fileInput"
         @change="onFileChange"
       />
-      <input type="date" name="start-date" v-model="startDate" @change="resetResult" required />
-      <input type="date" name="end-date" v-model="endDate" @change="resetResult" required />
+      <input
+        type="date"
+        name="start-date"
+        v-model="startDate"
+        @change="resetResult"
+        required
+      />
+      <input
+        type="date"
+        name="end-date"
+        v-model="endDate"
+        @change="resetResult"
+        required
+      />
       <button :disabled="!selectedFile">Examine the file</button>
       <button :disabled="!selectedFile" @click="resetAll">Reset all</button>
     </form>
@@ -42,13 +54,25 @@
         <thead>
           <tr class="calendar-tr">
             <th class="calendar-table-name">Name</th>
-            <th class="calendar-table-head" v-for="(yearData, year) in calendar" :key="year">
+            <th
+              class="calendar-table-head"
+              v-for="(yearData, year) in calendar"
+              :key="year"
+            >
               <div class="calendar-table-year">{{ year }}</div>
               <tr>
-                <th class="calendar-table-head" v-for="(monthData, month) in yearData" :key="month">
+                <th
+                  class="calendar-table-head"
+                  v-for="(monthData, month) in yearData"
+                  :key="month"
+                >
                   <div class="calendar-table-month">{{ months[month] }}</div>
                   <tr>
-                    <th class="calendar-table-head border" v-for="day in monthData" :key="day">
+                    <th
+                      class="calendar-table-head border"
+                      v-for="day in monthData"
+                      :key="day"
+                    >
                       {{ day }}
                     </th>
                   </tr>
@@ -60,8 +84,15 @@
         <tbody>
           <tr class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
             <td class="calendar-table-name">{{ task.name }}</td>
-            <td class="border" v-for="day in daysBetweenStartAndEnd" :key="day">
-              {{ task.days.includes(day) ? '✔' : '' }}
+            <td class="border" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
+              {{
+                getDayCell(
+                  task,
+                  day,
+                  daysBetweenStartAndEnd[key - 1],
+                  daysBetweenStartAndEnd[key + 1]
+                )
+              }}
             </td>
           </tr>
         </tbody>
@@ -118,7 +149,13 @@ export default {
         currentDate <= lastDate;
         currentDate.setDate(currentDate.getDate() + 1)
       ) {
-        dateArray.push(new Date(currentDate).toLocaleString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }));
+        dateArray.push(
+          new Date(currentDate).toLocaleString('de-DE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+        );
       }
 
       return dateArray;
@@ -198,7 +235,10 @@ export default {
 
         calendar[year][month] = {};
 
-        const daysInMonth = currentDate.getMonth() === lastDate.getMonth() ? lastDate.getDate() : new Date(year, month + 1, 0).getDate();
+        const daysInMonth =
+          currentDate.getMonth() === lastDate.getMonth()
+            ? lastDate.getDate()
+            : new Date(year, month + 1, 0).getDate();
 
         for (let day = 1; day <= daysInMonth; day++) {
           calendar[year][month] = day;
@@ -208,6 +248,23 @@ export default {
       }
 
       this.calendar = calendar;
+    },
+    getDayCell(task, day, previousDay, nextDay) {
+      // Not done
+      if (!task.days.includes(day)) {
+        return '';
+      }
+
+      // Streak
+      if (
+        (previousDay && task.days.includes(previousDay)) ||
+        (nextDay && task.days.includes(nextDay))
+      ) {
+        return '🎉';
+      }
+
+      // Single done
+      return '✔';
     },
     resetChosenStatistics() {
       this.selectedTasksIDs = [];
@@ -281,7 +338,8 @@ export default {
   text-align: start;
   padding: 0;
 }
-.calendar-table-year, .calendar-table-month {
+.calendar-table-year,
+.calendar-table-month {
   padding-left: 5px;
 }
 </style>
