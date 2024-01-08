@@ -7,8 +7,8 @@
         ref="fileInput"
         @change="onFileChange"
       />
-      <input type="date" name="start-date" v-model="startDate" required />
-      <input type="date" name="end-date" v-model="endDate" required />
+      <input type="date" name="start-date" v-model="startDate" @change="resetResult" required />
+      <input type="date" name="end-date" v-model="endDate" @change="resetResult" required />
       <button :disabled="!selectedFile">Examine the file</button>
       <button :disabled="!selectedFile" @click="resetAll">Reset all</button>
     </form>
@@ -135,6 +135,7 @@ export default {
     },
     async submitFileForm() {
       if (!this.selectedFile) return;
+      this.resetResult();
 
       const formData = new FormData();
       formData.append('habitica-tasks-history', this.selectedFile);
@@ -177,7 +178,6 @@ export default {
       }
     },
     submitTasksForm() {
-      console.log('this.statisticsList', this.statisticsList);
       this.chosenStatisticsList = this.statisticsList.filter(task =>
         this.selectedTasksIDs.includes(task.id)
       );
@@ -198,7 +198,7 @@ export default {
 
         calendar[year][month] = {};
 
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInMonth = currentDate.getMonth() === lastDate.getMonth() ? lastDate.getDate() : new Date(year, month + 1, 0).getDate();
 
         for (let day = 1; day <= daysInMonth; day++) {
           calendar[year][month] = day;
@@ -213,6 +213,12 @@ export default {
       this.selectedTasksIDs = [];
       this.chosenStatisticsList = [];
       this.allTasksSelected = false;
+    },
+    resetResult() {
+      this.tasks = [];
+      this.statisticsList = [];
+      this.resetChosenStatistics();
+      this.errors = [];
     },
     resetAll() {
       this.selectedFile = null;
