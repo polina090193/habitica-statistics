@@ -6,6 +6,8 @@ def calculate_percentage(part, whole):
 def calculate_statistics(reader, start_date, end_date, task_ids):
     habits_statistics = []
     number_of_days = (end_date - start_date).days
+    if (number_of_days < 0):
+        return error('End date must be greater than start date')
 
     if (not task_ids or len(task_ids) == 0):
         task_ids = list(set(map(lambda row: row['Task ID'], reader)))

@@ -171,7 +171,22 @@ export default {
       this.errors = [];
     },
     async submitFileForm() {
-      if (!this.selectedFile) return;
+      if (!this.selectedFile) {
+        this.errors.push('No file selected');
+        return;
+      }
+      if (!this.startDate) {
+        this.errors.push('No start date selected');
+        return;
+      }
+      if (!this.endDate) {
+        this.errors.push('No end date selected');
+        return;
+      }
+      if (this.startDate > this.endDate) {
+        this.errors.push('Start date cannot be after end date');
+        return;
+      }
       this.resetResult();
 
       const formData = new FormData();

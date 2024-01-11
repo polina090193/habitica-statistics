@@ -19,11 +19,15 @@ while True:
 
     try:
         end_date = datetime.strptime(end_date_inp, '%d.%m.%Y')
+        number_of_days = (end_date - start_date).days
+
+        if (number_of_days < 0):
+            print('End date must be greater than start date')
+            continue
         break
     except ValueError:
         print('Incorrect format, should be dd.mm.yyyy')
 
-number_of_days = (end_date - start_date).days
 
 def calculate_percentage(part, whole):
     return (part / whole) * 100
