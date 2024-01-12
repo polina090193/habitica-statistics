@@ -49,7 +49,7 @@
       <button>Give me my statistics</button>
       <button @click="resetChosenStatistics">Reset statistics</button>
     </form>
-    <div style="max-width: 80vw" v-if="chosenStatisticsList.length">
+    <div class="calendar-table-wrapper" v-if="chosenStatisticsList.length">
       <table class="calendar-table">
         <thead>
           <tr class="calendar-tr">
@@ -67,7 +67,7 @@
                   :key="month"
                 >
                   <div class="calendar-table-month">{{ months[month] }}</div>
-                  <tr>
+                  <tr class="calendar-table-days">
                     <th
                       class="calendar-table-head border"
                       v-for="day in monthData"
@@ -84,21 +84,23 @@
         <tbody>
           <tr class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
             <td class="calendar-table-name">{{ task.name }}</td>
-            <td class="border" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
-              {{
-                getDayCell(
-                  task,
-                  day,
-                  daysBetweenStartAndEnd[key - 1],
-                  daysBetweenStartAndEnd[key + 1]
-                )
-              }}
-            </td>
+            <div class="calendar-days-cells">
+              <td class="border" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
+                {{
+                  getDayCell(
+                    task,
+                    day,
+                    daysBetweenStartAndEnd[key - 1],
+                    daysBetweenStartAndEnd[key + 1]
+                  )
+                }}
+              </td>
+            </div>
           </tr>
         </tbody>
       </table>
     </div>
-    <table v-if="chosenStatisticsList.length">
+    <table class="statistics-table" v-if="chosenStatisticsList.length">
       <tr>
         <th>Name</th>
         <th>Days done</th>
@@ -248,18 +250,12 @@ export default {
           calendar[year] = {};
         }
 
-        calendar[year][month] = {};
-
-        const daysInMonth =
-          currentDate.getMonth() === lastDate.getMonth()
-            ? lastDate.getDate()
-            : new Date(year, month + 1, 0).getDate();
-
-        for (let day = 1; day <= daysInMonth; day++) {
-          calendar[year][month] = day;
+        if (!calendar[year][month]) {
+          calendar[year][month] = [];
         }
+        calendar[year][month].push(currentDate.getDate());
 
-        currentDate.setMonth(month + 1);
+        currentDate.setDate(currentDate.getDate() + 1);
       }
 
       this.calendar = calendar;
@@ -325,8 +321,12 @@ export default {
 * {
   box-sizing: border-box;
 }
-.calendar-table {
+.calendar-table-wrapper {
+  max-width: 80vw;
   overflow: auto;
+  margin-top: 20px;
+}
+.calendar-table {
   border-collapse: collapse;
   border: 1px solid black;
 }
@@ -356,5 +356,18 @@ export default {
 .calendar-table-year,
 .calendar-table-month {
   padding-left: 5px;
+}
+.calendar-table-days {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.calendar-days-cells {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.statistics-table {
+  margin-top: 20px;
 }
 </style>
