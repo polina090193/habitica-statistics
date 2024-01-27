@@ -50,55 +50,56 @@
       <button @click="resetChosenStatistics">Reset statistics</button>
     </form>
     <div class="calendar-table-wrapper" v-if="chosenStatisticsList.length">
-      <table class="calendar-table">
-        <thead>
-          <tr class="calendar-tr">
-            <th class="calendar-table-name">Name</th>
-            <th
-              class="calendar-table-head"
-              v-for="(yearData, year) in calendar"
-              :key="year"
-            >
-              <div class="calendar-table-year">{{ year }}</div>
-              <tr>
-                <th
-                  class="calendar-table-head"
-                  v-for="(monthData, month) in yearData"
-                  :key="month"
-                >
-                  <div class="calendar-table-month">{{ months[month] }}</div>
-                  <tr class="calendar-table-days">
-                    <th
-                      class="calendar-table-head border"
-                      v-for="day in monthData"
-                      :key="day"
-                    >
-                      {{ day }}
-                    </th>
-                  </tr>
-                </th>
-              </tr>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
-            <td class="calendar-table-name">{{ task.name }}</td>
-            <div class="calendar-days-cells">
-              <td class="border" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
-                {{
-                  getDayCell(
-                    task,
-                    day,
-                    daysBetweenStartAndEnd[key - 1],
-                    daysBetweenStartAndEnd[key + 1]
-                  )
-                }}
-              </td>
+      <div class="calendar-table" aria-label="calendar table">
+        <!-- <div class="calendar-head"> --><!-- TODO continue like in comments -->
+        <div class="calendar-table-name">Name</div>
+        <div class="calendar-table-years">
+          <div
+            class="calendar-table-year"
+            v-for="(yearData, year) in calendar"
+            :key="year"
+          >
+            <div class="calendar-table-year-name">{{ year }}</div>
+            <div class="calendar-table-months">
+              <div
+                class="calendar-table-month"
+                v-for="(monthData, month) in yearData"
+                :key="month"
+              >
+                <div class="calendar-table-month-name">{{ months[month] }}</div>
+                <div :class="[
+                  'calendar-table-days',
+                  year == lastYear && month == lastMonth ? 'calendar-table-days_last-month' : '',
+                  ]">
+                  <div
+                    class="calendar-table-day-name border"
+                    v-for="day in monthData"
+                    :key="day"
+                  >
+                    {{ day }}
+                  </div>
+                </div>
+              </div>
             </div>
-          </tr>
-        </tbody>
-      </table>
+          </div>
+        </div>
+      <!-- </div> --><!-- TODO continue like in comments -->
+        <!-- TODO continue like in comments --><!-- <div class="calendar-tr" v-for="task in chosenStatisticsList" :key="task.id">
+          <div class="calendar-table-name">{{ task.name }}</td>
+          <div class="calendar-days-cells">
+            <div class="border" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
+              {{
+                getDayCell(
+                  task,
+                  day,
+                  daysBetweenStartAndEnd[key - 1],
+                  daysBetweenStartAndEnd[key + 1]
+                )
+              }}
+            </div>
+          </div>
+        </div> -->
+      </div>
     </div>
     <table class="statistics-table" v-if="chosenStatisticsList.length">
       <tr>
@@ -127,8 +128,8 @@ export default {
     return {
       tasks: [],
       selectedFile: null,
-      startDate: '',
-      endDate: '',
+      startDate: '2023-12-31',
+      endDate: '2024-02-02',
       calendar: {},
       selectedTasksIDs: [],
       statisticsList: [],
@@ -162,6 +163,14 @@ export default {
 
       return dateArray;
     },
+    lastYear() {
+      const years = Object.keys(this.calendar)
+      return years[years.length - 1]
+    },
+    lastMonth() {
+      const months = Object.keys(this.calendar[this.lastYear])
+      return months[months.length - 1]
+    }
   },
   mounted() {
     this.generateCalendar();
@@ -332,10 +341,6 @@ export default {
 }
 .border {
   border: 1px solid black;
-  max-width: 30px;
-  width: 30px;
-  padding: 0;
-  margin: 0;
 }
 .calendar-tr {
   display: flex;
@@ -344,18 +349,11 @@ export default {
   border: 1px solid black;
 }
 .calendar-table-name {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
   border: 1px solid black;
 }
 .calendar-table-head {
   text-align: start;
   padding: 0;
-}
-.calendar-table-year,
-.calendar-table-month {
-  padding-left: 5px;
 }
 .calendar-table-days {
   display: flex;
@@ -369,5 +367,89 @@ export default {
 }
 .statistics-table {
   margin-top: 20px;
+}
+</style>
+<!-- <style>
+.calendar-table-wrapper {
+	overflow: auto;
+	margin-top: 20px;
+	width: 80%;
+}
+.calendar-table {
+  display: grid;
+  grid-template-rows: 60px repeat(auto-fit, minmax(30px, 1fr));
+  grid-template-columns: auto 1fr;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+.calendar-table-years {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  grid-template-rows: auto;
+}
+.calendar-table-year {
+  display: grid;
+  grid-template-rows: 20px 40px;
+}
+.calendar-table-months {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	grid-template-rows: 40px;
+	width: 100%;
+}
+.calendar-table-month {
+	display: grid;
+	width: 100%;
+	grid-template-rows: 20px 20px;
+}
+.calendar-table-days {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(auto-fit, 20px);
+	grid-template-rows: 20px;
+}
+</style> -->
+<style>
+.calendar-table-wrapper {
+	overflow-x: auto;
+	margin-top: 20px;
+	width: 80%;
+	max-width: 80vw;
+}
+.calendar-table {
+	display: flex;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	overflow-x: auto;
+	max-width: 80vw;
+}
+.calendar-table-years {
+	display: flex;
+	height: 60px;
+}
+.calendar-table-year {
+	display: flex;
+	height: 60px;
+	flex-direction: column;
+}
+.calendar-table-months {
+	display: flex;
+	height: 40px;
+}
+.calendar-table-month {
+	display: flex;
+	height: 40px;
+	flex-direction: column;
+}
+.calendar-table-days {
+	display: flex;
+	max-height: 20px;
+	justify-content: flex-end;
+}
+.calendar-table-days_last-month {
+  justify-content: flex-start;
+}
+.calendar-table-day-name {
+	width: 30px;
 }
 </style>
