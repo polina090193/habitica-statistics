@@ -1,5 +1,5 @@
 # Habitica Statistics
-Python app for calculating your habits statistics based on data from [Habitica app](https://habitica.com/).
+Python + web (Flask + Vue) app for calculating your habits statistics based on data from [Habitica app](https://habitica.com/).
 
 ## Getting the file
 1. Login to your Habitica account.
