@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-    <div>
+    <div class="wrapper">
       <form @submit.prevent="submitFileForm">
         <input
           type="file"
           name="habitica-tasks-history"
           ref="fileInput"
           @change="onFileChange"
+          class="mr"
         />
         <input
           type="date"
@@ -14,6 +15,7 @@
           v-model="startDate"
           @change="resetResult"
           required
+          class="mr"
         />
         <input
           type="date"
@@ -21,12 +23,13 @@
           v-model="endDate"
           @change="resetResult"
           required
+          class="mr"
         />
-        <button :disabled="!selectedFile">Examine the file</button>
+        <button :disabled="!selectedFile" class="mr">Examine the file</button>
         <button :disabled="!selectedFile" @click="resetAll">Reset all</button>
       </form>
-      <div style="color: red" v-for="error in errors" :key="error">{{ error }}</div>
-      <form v-if="tasks.length" @submit.prevent="submitTasksForm">
+      <div class="file-form-error" style="color: red" v-for="error in errors" :key="error">{{ error }}</div>
+      <form class="tasks-selector" v-if="tasks.length" @submit.prevent="submitTasksForm">
         <label for="select-all-tasks">
           <input
             type="checkbox"
@@ -47,18 +50,18 @@
             {{ task.name }}
           </label>
         </p>
-        <button>Give me my statistics</button>
+        <button class="mr">Give me my statistics</button>
         <button @click="resetChosenStatistics">Reset statistics</button>
       </form>
       <table v-if="chosenStatisticsList.length" class="calendar-table">
         <tr>
-          <th>Name</th>
-          <th v-for="(day, key) in daysBetweenStartAndEnd" :key="day" v-html="getDateForCalendar(day, key)">
+          <th class="name-col">Name</th>
+          <th class="days-col" v-for="(day, key) in daysBetweenStartAndEnd" :key="day" v-html="getDateForCalendar(day, key)">
           </th>
         </tr>
         <tr v-for="task in chosenStatisticsList" :key="task.id">
-          <td>{{ task.name }}</td>
-          <td v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
+          <td  class="name-col">{{ task.name }}</td>
+          <td class="days-col" v-for="(day, key) in daysBetweenStartAndEnd" :key="day">
             {{
               getDayResult(
                 task,
@@ -70,6 +73,7 @@
           </td>
         </tr>
       </table>
+      <div class="total-days">Total days: {{ daysBetweenStartAndEnd.length }}</div>
       <table class="statistics-table" v-if="chosenStatisticsList.length">
         <tr>
           <th>Name</th>
@@ -98,8 +102,8 @@ export default {
     return {
       tasks: [],
       selectedFile: null,
-      startDate: '2023-12-31',
-      endDate: '2024-02-02',
+      startDate: '',
+      endDate: '',
       calendar: {},
       selectedTasksIDs: [],
       statisticsList: [],
@@ -194,8 +198,8 @@ export default {
           }
         } else {
           const fetchedTasksListJson = await fetchedTasksList.json();
-          this.tasks = fetchedTasksListJson.tasks_list;
           this.statisticsList = fetchedTasksListJson.statistics;
+          this.tasks = this.statisticsList.map(task => ({id: task.id, name: task.name}))
         }
       } catch (e) {
         this.errors.push('Network error occurred');
@@ -229,7 +233,7 @@ export default {
     getDayResult(task, day, previousDay, nextDay) {
       // Not done
       if (!task.days.includes(day)) {
-        return '❌';
+        return '×';
       }
 
       // Streak
@@ -287,140 +291,63 @@ export default {
 * {
   box-sizing: border-box;
 }
-.calendar-table {
-  max-width: 80vw;
-  overflow: auto;
-  margin-top: 20px;
-}
-.calendar-table {
-  border-collapse: collapse;
-  border: 1px solid black;
-}
-.border {
-  border: 1px solid black;
-}
-.calendar-tr {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  border: 1px solid black;
-}
-.calendar-table-name {
-  border: 1px solid black;
-}
-.calendar-table-head {
-  text-align: start;
-  padding: 0;
-}
-.calendar-table-days {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.statistics-table {
-  margin-top: 20px;
-}
-</style>
-<!-- <style>
-.calendar-table-wrapper {
-	overflow: auto;
-	margin-top: 20px;
-	width: 80%;
-}
-.calendar-table {
-  display: grid;
-  grid-template-rows: 60px repeat(auto-fit, minmax(30px, 1fr));
-  grid-template-columns: auto 1fr;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-}
-.calendar-table-years {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  grid-template-rows: auto;
-}
-.calendar-table-year {
-  display: grid;
-  grid-template-rows: 20px 40px;
-}
-.calendar-table-months {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	grid-template-rows: 40px;
-	width: 100%;
-}
-.calendar-table-month {
-	display: grid;
-	width: 100%;
-	grid-template-rows: 20px 20px;
-}
-.calendar-table-days {
-	display: grid;
-	width: 100%;
-	grid-template-columns: repeat(auto-fit, 20px);
-	grid-template-rows: 20px;
-}
-</style> -->
-<style>
-.calendar-table-wrapper {
-  overflow-x: auto;
-  margin-top: 20px;
-  width: 90vw;
-}
-.calendar-table {
+.wrapper {
   display: flex;
   flex-direction: column;
-  overflow-x: auto;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
+  width: 100%;
+  align-items: center;
 }
-.calendar-head {
+.mr {
+  margin-right: 10px;
+}
+.tasks-selector {
+  margin-top: 20px;
+}
+.file-form-error {
+  margin-top: 5px;
+}
+.calendar-table {
+  position: relative;
   display: flex;
+  flex-direction: column;
+  max-width: 80vw;
+  overflow-x: auto;
+  margin-top: 30px;
+  padding-bottom: 10px;
+  border-collapse: collapse;
+  border: 1px solid gray;
 }
-.calendar-table-first-column {
-  flex-shrink: 0;
-  width: 200px;
-  border-right: 1px solid black;
+.name-col {
+  position: sticky;
+  top: 0;
+  left: 0;
+  min-width: 140px;
+  padding: 5px;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid lightgray;
+  background-color: white;
+}
+.days-cols {
+  display: flex;
+  justify-content: flex-end;
+}
+.days-col {
+  min-width: 58px;
+  padding: 5px;
+  border: 1px solid lightgray;
   text-align: center;
   vertical-align: middle;
 }
-.calendar-table-years {
-  display: flex;
-  height: 60px;
+.total-days {
+  margin-top: 30px;
 }
-.calendar-table-year {
-  display: flex;
-  height: 60px;
-  flex-direction: column;
+.statistics-table {
+  border-collapse: collapse;
+  margin: 30px 0;
 }
-.calendar-table-months {
-  display: flex;
-  height: 40px;
-}
-.calendar-table-month {
-  display: flex;
-  height: 40px;
-  flex-direction: column;
-}
-.calendar-table-days {
-  display: flex;
-  max-height: 20px;
-  justify-content: flex-end;
-}
-.calendar-table-days_last-month {
-  justify-content: flex-start;
-}
-.calendar-table-day-name {
-  width: 30px;
-}
-.calendar-days-cells {
-  display: flex;
-  justify-content: flex-end;
-}
-.calendar-days-cell {
-  display: flex;
-  justify-content: flex-end;
-  width: 30px;
+.statistics-table th,
+.statistics-table td {
+  padding: 10px;
+  border: 1px solid gray;
 }
 </style>

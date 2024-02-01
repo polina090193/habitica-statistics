@@ -34,18 +34,14 @@ def get_statistics():
   
   reader = list(csv.DictReader(file_to_process))
 
-  tasks_list = []
   ids_seen = set()
 
   for row in reader:
     task_id = row['Task ID']
     if task_id not in ids_seen:
-      task = {'id': task_id, 'name': row['Task Name']}
-      tasks_list.append(task)
       ids_seen.add(task_id)
 
   response = {
-    'tasks_list': tasks_list,
     'statistics': habitica_statistics.calculate_statistics(
       reader,
       datetime.strptime(start_date, '%d.%m.%Y'),
